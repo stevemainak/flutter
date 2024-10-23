@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:systemapp/domain/authentication/login/login.dart';
+import 'package:systemapp/pages/claims/claims.dart';
 import 'package:systemapp/pages/profile/my-profile/edit_profile.dart';
 import 'package:systemapp/pages/profile/my-profile/my-profile.dart';
 import 'pages/dashboard/dashboard.dart'; // Import Homepage

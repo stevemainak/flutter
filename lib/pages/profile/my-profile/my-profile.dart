@@ -83,7 +83,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 width: 120,
                 height: 120,
                 child: CircleAvatar(
-                  radius: 50,
+                  radius: 50, 
                   backgroundImage: NetworkImage('https://picsum.photos/200/300'),
                 ),
               ),
