@@ -154,7 +154,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         padding: const EdgeInsets.all(15),
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 173, 26, 16).withOpacity(0.9),
+                          color: const Color.fromARGB(255, 126, 167, 255),
                           borderRadius: BorderRadius.circular(15),
                           // boxShadow: [
                           //   BoxShadow(
@@ -184,7 +184,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       entry.key,
                                       style: const TextStyle(
                                           fontSize: 14,
-                                          color: Color.fromARGB(255, 255, 228, 228),
+                                          color: Color.fromARGB(255, 255, 255, 255),
                                           fontWeight: FontWeight.w600),
                                           
                                     ),

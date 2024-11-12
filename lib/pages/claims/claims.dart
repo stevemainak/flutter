@@ -3,20 +3,61 @@
 import 'package:flutter/material.dart';
 
 class ClaimsPage extends StatefulWidget {
+
   const ClaimsPage({super.key});
+
+  
 
   @override
   State<ClaimsPage> createState() => _ClaimsPageState();
 }
 
 class _ClaimsPageState extends State<ClaimsPage> {
+  List<Map<String, String>> claims = [
+  {
+    'description': 'Medical reimbursement',
+    'amount': '15,000',
+    'date': '10/01/2024',
+    'status': 'Approved',
+  },
+  {
+    'description': 'Travel expenses',
+    'amount': '5,000',
+    'date': '10/15/2024',
+    'status': 'Pending',
+  },
+  {
+    'description': 'Office supplies',
+    'amount': '1,200',
+    'date': '10/20/2024',
+    'status': 'Approved',
+  },
+  {
+    'description': 'Client meeting refreshments',
+    'amount': '3,500',
+    'date': '10/22/2024',
+    'status': 'Rejected',
+  },
+  {
+    'description': 'Team building expenses',
+    'amount': '10,000',
+    'date': '10/25/2024',
+    'status': 'Pending',
+  },
+];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 40, 176, 255), // Matches gradient color
-        title: const Text('Claims'),
+        backgroundColor: const Color.fromARGB(255, 126, 167, 255),
+        title: const Text('Claims',  style: TextStyle(fontSize: 20, color: Colors.white)),
         centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showRequestModal(context),
+        child: const Icon(Icons.add),
       ),
       body: Container(
         width: double.infinity,
@@ -24,53 +65,35 @@ class _ClaimsPageState extends State<ClaimsPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              const Color.fromARGB(255, 40, 176, 255)!,
-              const Color.fromARGB(255, 10, 204, 194),
-              const Color.fromARGB(255, 76, 168, 255),
+              const Color.fromARGB(255, 126, 167, 255)!,
+              const Color.fromARGB(255, 126, 167, 255),
+              const Color.fromARGB(255, 0, 0, 0),
             ],
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                height: 100, // Adjusted height to fit card and text
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 6, // Adjust based on number of cards
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: buildCard(),
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Colored Cards Section
+            const SizedBox(height: 20),
             Container(
-              decoration:  BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  borderRadius:const BorderRadius.all(Radius.circular(25),),
-                  boxShadow: [
-                    BoxShadow(
-                      color:  const Color.fromARGB(255, 85, 85, 85).withOpacity(0.2),
-                      spreadRadius: 3,
-                      blurRadius: 3,
-                      offset: const Offset(0, 3),
-                      ),
-                ],
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 85, 85, 85).withOpacity(0.2),
+                    spreadRadius: 3,
+                    blurRadius: 3,
+                    offset: const Offset(0, 3),
                   ),
-               // padding: const EdgeInsets.only(right: 5.0),
-              height: 140,
+                ],
+              ),
+              height: 120,
               width: double.infinity,
-              // color: Colors.red,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(                  
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     buildColoredCard('Annual', '120000', Colors.blue),
@@ -78,12 +101,11 @@ class _ClaimsPageState extends State<ClaimsPage> {
                     buildColoredCard('Previous', '0', Colors.red),
                     buildColoredCard('Current', '0', Colors.orange),
                   ],
-                  
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            // Data Table Section
+            // Data Table Section with Status and Popup Menu
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -95,29 +117,45 @@ class _ClaimsPageState extends State<ClaimsPage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'My Claims',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
+                  child: Container(
+                    
+                    width: double.infinity,
+                    
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 230, 230, 230),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'My Claims',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 126, 167, 255),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: claims.length,
+                              itemBuilder: (context, index) {
+                                return buildClaimCard(
+                                  claims[index]['description'] ?? '',
+                                  claims[index]['amount'] ?? '',
+                                  claims[index]['date'] ?? '',
+                                  claims[index]['status'] ?? '',
+                                );
+                              },
+                            ),
+
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            buildDataTable('10/23/2024', '10,000'),
-                            buildDataTable('10/23/2024', '10,000'),
-                            buildDataTable('10/23/2024', '10,000'),
-                            buildDataTable('10/23/2024', '10,000'),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -128,60 +166,101 @@ class _ClaimsPageState extends State<ClaimsPage> {
     );
   }
 
-  Widget buildCard() {
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255),
-            borderRadius: BorderRadius.circular(100), // Rounded corners
-            boxShadow: [
-                    BoxShadow(
-                      color:  const Color.fromARGB(255, 85, 85, 85).withOpacity(0.2),
-                      spreadRadius: 3,
-                      blurRadius: 3,
-                      offset: const Offset(0, 3),
+  Widget buildClaimCard(String description, String amount, String date, String status) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  description,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      amount,
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    Text(
+                      date,
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    Text(
+                      status,
+                      style: TextStyle(
+                        color: status == 'Approved'
+                            ? Colors.green
+                            : status == 'Rejected'
+                                ? Colors.red
+                                : Colors.orange,
+                        fontWeight: FontWeight.bold,
                       ),
-                ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 3),
-        const Text(
-          'Dummy Title\nDummy Subtitle',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              // Handle Edit, View, Delete actions here
+            },
+            itemBuilder: (BuildContext context) {
+              return {'Edit', 'View', 'Delete'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+            icon: const Icon(Icons.more_vert, color: Colors.grey),
+          ),
+        ],
+      ),
     );
   }
 
   Widget buildColoredCard(String title, String value, Color color) {
     return Container(
-      width: 90,
+      height: 70,
+      width: 75,
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-                    BoxShadow(
-                      color:  const Color.fromARGB(255, 85, 85, 85).withOpacity(0.2),
-                      spreadRadius: 3,
-                      blurRadius: 3,
-                      offset: const Offset(0, 3),
-                      ),
-                ],
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 3,
+            blurRadius: 3,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text(
             title,
-            style: const TextStyle(color: Colors.white, fontSize: 15),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
           const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 6),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
@@ -191,7 +270,7 @@ class _ClaimsPageState extends State<ClaimsPage> {
               style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                 fontSize: 14,
+                fontSize: 12,
               ),
             ),
           ),
@@ -199,43 +278,121 @@ class _ClaimsPageState extends State<ClaimsPage> {
       ),
     );
   }
+}
 
-  Widget buildDataTable(String date, String amount) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
+void showRequestModal(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Request Claim',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 126, 167, 255),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Fill the form to make a finance claim',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 20),
+            buildTextField('Date of Claim', Icons.calendar_today),
+            const SizedBox(height: 10),
+            buildDropdownField('Claimant - Staff, spouse or children'),
+            const SizedBox(height: 10),
+            buildTextField('Total Claimed', Icons.attach_money),
+            const SizedBox(height: 10),
+            buildUploadField(),
+            const SizedBox(height: 10),
+            buildDescriptionField(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Apply Claim'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget buildTextField(String label, IconData icon) {
+  return TextField(
+    decoration: InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon),
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Table(
-        columnWidths: const {
-          0: FlexColumnWidth(2),
-          1: FlexColumnWidth(2),
-          2: FlexColumnWidth(1),
-        },
-        children: [
-          TableRow(
-            children: [
-              const Text('Date claimed'),
-              const Text('Amount Claimed'),
-              
-              Container(),
-            ],
-          ),
-          
-          TableRow(
-            children: [
-              Text(date),
-              Text(amount),
-              const Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-            ],
-          ),
-        ],
+    ),
+  );
+}
+
+Widget buildDropdownField(String hint) {
+  return DropdownButtonFormField(
+    items: const [
+      DropdownMenuItem(child: Text('Staff'), value: 'Staff'),
+      DropdownMenuItem(child: Text('Spouse'), value: 'Spouse'),
+      DropdownMenuItem(child: Text('Children'), value: 'Children'),
+    ],
+    onChanged: (value) {},
+    decoration: InputDecoration(
+      hintText: hint,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget buildUploadField() {
+  return Row(
+    children: [
+      ElevatedButton(
+        onPressed: () {},
+        child: const Text('Browse'),
+      ),
+      const SizedBox(width: 10),
+      const Expanded(
+        child: Text(
+          'No file selected.',
+          style: TextStyle(fontSize: 14),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget buildDescriptionField() {
+  return TextField(
+    maxLines: 4,
+    decoration: InputDecoration(
+      labelText: 'Description (*required)',
+      alignLabelWithHint: true,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+  );
 }

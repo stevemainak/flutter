@@ -66,7 +66,7 @@ class _EditProfileState extends State<EditProfile> {
           ClipPath(
             clipper: RedClipper(),
             child: Container(
-              color: Colors.red,
+              color: const Color.fromARGB(255, 126, 167, 255),
               height: 450,
             ),
           ),
@@ -113,7 +113,7 @@ class _EditProfileState extends State<EditProfile> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: currentIndex == index
-                              ? const Color.fromARGB(255, 179, 45, 4)
+                              ? const Color.fromARGB(255, 126, 167, 255)
                               : Colors.grey.withOpacity(0.5),
                         ),
                       );
@@ -191,7 +191,7 @@ class _EditProfileState extends State<EditProfile> {
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize:const Size(50, 40), // Ensures height is 50
-                          backgroundColor: Colors.red[900], // Background color
+                          backgroundColor: const Color.fromARGB(255, 126, 167, 255), // Background color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50), // Rounded corners
                           ),
