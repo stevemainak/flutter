@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:systemapp/models/login_credentials.dart';
+import 'package:systemapp/models/user_credentials.dart';
 import 'package:systemapp/pages/dashboard/dashboard.dart';
 import 'package:systemapp/providers/providers.dart';
-import 'package:systemapp/session_manager.dart'; // Import session manager
+import 'package:systemapp/session_manager.dart';
 import 'package:tuple/tuple.dart';
 
 class Loginpage extends StatefulWidget {
@@ -15,21 +19,50 @@ class Loginpage extends StatefulWidget {
 class _LoginpageState extends State<Loginpage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    emailController.addListener(_validateFields);
+    passwordController.addListener(_validateFields);
   }
 
   Future<void> _checkLoginStatus() async {
-    if (await SessionManager.isLoggedIn()) {
+    if (await UserSecureStorage.isLoggedIn()) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const Homepage()),
       );
     }
   }
+
+  void _validateFields() {
+    setState(() {
+      isButtonEnabled =
+          emailController.text.isNotEmpty && passwordController.text.isNotEmpty;
+    });
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  // Remove the Toast method
+  // void  _showErrorToast(String message) {
+  //   Fluttertoast.showToast(
+  //     msg: message,
+  //     toastLength: Toast.LENGTH_SHORT,
+  //     gravity: ToastGravity.BOTTOM,
+  //     backgroundColor: Colors.red,
+  //     textColor: Colors.white,
+  //     fontSize: 16.0,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +177,7 @@ class _LoginpageState extends State<Loginpage> {
                                 ),
                                 border: InputBorder.none,
                               ),
+                              obscureText: true,
                             ),
                           ),
                         ],
@@ -158,23 +192,60 @@ class _LoginpageState extends State<Loginpage> {
                     Consumer(
                       builder: (_, WidgetRef ref, __) {
                         return ElevatedButton(
-                          onPressed: () async {
+                         onPressed: isButtonEnabled
+                        ? () async {
+                            // Fetch the response
                             var response = await ref.read(
-                              loginUserProvider(Tuple2(emailController.text, passwordController.text)).future
+                              loginUserProvider(Tuple2(
+                                emailController.text,
+                                passwordController.text,
+                              )).future,
                             );
 
-                            if (response[0] != null) {
-                              // Save the token and navigate to dashboard
-                              await SessionManager.saveToken(response[0]);
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => const Homepage()),
-                              );
+                            
+
+                            // Check if response contains a valid token or a 403 error
+                           if (response[0] != null && response[1] == 200) {
+  // Parse the login response and store credentials
+                            final jsonResponse = json.decode(response[0]!);
+                            LoginCredentials credentials = LoginCredentials.fromJson(jsonResponse);
+                            
+
+                            // Store user information in secure storage
+                            await UserSecureStorage.setUserid(credentials.id.toString());
+                            await UserSecureStorage.setUserName(credentials.personalInfo.fullName);
+                            await UserSecureStorage.setUserEmail(credentials.email);
+                            await UserSecureStorage.setUserRoleId(credentials.roleId.toString());
+                            await UserSecureStorage.setstaffid(credentials.personalInfo.staffId);
+                            await UserSecureStorage.setAccessToken(credentials.tokens.access);
+                            await UserSecureStorage.setRefreshToken(credentials.tokens.refresh);
+                            await UserSecureStorage.setUserRole(credentials.role);  
+                            await UserSecureStorage.setPhoneNumber(credentials.personalInfo.phoneNumber); 
+
+                            // Navigate to Dashboard
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Homepage(),
+                              ),
+                            );
                             } else {
-                              // Handle login error
-                              print("Login failed");
+                              // Show error SnackBar on invalid credentials or 403 error
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    response[1] == 403
+                                        ? 'Invalid email or password'
+                                        : 'An unexpected error occurred',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             }
-                          },
+                          }
+                        : null,
+
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 50),
                             backgroundColor: const Color.fromARGB(255, 126, 167, 255),
@@ -230,7 +301,7 @@ class _LoginpageState extends State<Loginpage> {
                                 color: Colors.black),
                             child: const Center(
                               child: Text(
-                                "GitHub",
+                                "Google",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

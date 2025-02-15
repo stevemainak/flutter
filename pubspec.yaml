@@ -43,7 +43,7 @@ dependencies:
   tuple: ^2.0.2
   shared_preferences: ^2.3.3
   flutter_secure_storage: ^9.2.2
-  
+
 
 dev_dependencies:
   flutter_test:

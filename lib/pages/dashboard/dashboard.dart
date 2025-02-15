@@ -17,6 +17,23 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   String buttonName = 'click';
   int currentIndex = 0;
+  String userName = 'User'; // Default name in case loading is delayed
+  String staffId = 'staff_id';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    String? name = await UserSecureStorage.getUserName();
+    String? staffId = await UserSecureStorage.getstaffid();
+    setState(() {
+      userName = name ?? 'User'; // Default to 'User' if name is null
+      this.staffId = staffId!;
+    });
+  }
 
   @override
   
@@ -63,7 +80,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        SessionManager.logout(context);
+                        UserSecureStorage.logout(context);
                       },
                       child: const Text("Logout"),
                     ),
@@ -126,7 +143,7 @@ class _HomepageState extends State<Homepage> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const MyProfilePage(),
+                      builder: (context) =>  MyProfilePage(staffid: staffId,),
                     ),
                   );
                 },
@@ -168,7 +185,7 @@ class _HomepageState extends State<Homepage> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const MyProfilePage(),
+                      builder: (context) => const Homepage(),
                     ),
                   );
                 },
@@ -182,7 +199,7 @@ class _HomepageState extends State<Homepage> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const MyProfilePage(),
+                      builder: (context) => const Homepage(),
                     ),
                   );
                 },
@@ -196,7 +213,7 @@ class _HomepageState extends State<Homepage> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const MyProfilePage(),
+                      builder: (context) => const Homepage(),
                     ),
                   );
                 },
@@ -223,18 +240,18 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ],
                 ),
-                child: const Row(
+                child:  Row(
                   children: [
                     Text(
-                      'Welcome Steve',
-                      style: TextStyle(
+                      'Welcome $userName',
+                      style: const TextStyle(
                         fontSize: 20,
                         color: Color.fromARGB(200, 27, 27, 27),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Icon(
+                    const SizedBox(width: 10),
+                    const Icon(
                       Icons.waving_hand,
                       color: Colors.amber,
                       size: 24,

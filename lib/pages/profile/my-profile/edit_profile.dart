@@ -12,46 +12,46 @@ class _EditProfileState extends State<EditProfile> {
   final PageController _pageController = PageController();
   int currentIndex = 0;
 
-  final List<UserInfo> userInfoList = [
-    UserInfo(header: "Personal Information", items: {
-      "Full Name": "Steve Maina",
-      "DOB": "23/12/1998",
-      "Gender": "Male",
-      "Email":"stevemaina@gmail.com",
-      "Phone": "+254 712 345 678",
-      "Marital Status": "Single",
-      "Place of Residence": "Rongai",
-    }),
-    UserInfo(header: "Statutory Info", items: {
-      "ID Number": "987654321",
-      "Tax Pin": "987654321",
-      "NSSF": "987654321",
-      "NHIF": "123456789",
-      "HELB": "987654321",
-    }),
-    UserInfo(header: "Next of Kin", 
-    items: {
-      "Name": "N/A",
-      "Address": "987654321",
-      "Email": "dummy@gmail.com",
-      "Phone": "987654321",
-      "Relationship": "Guardian",
-    }),
-    UserInfo(header: "Famly Details", 
-    items: {
-      "Name": "123456789",
-      "Phone": "987654321",
-      "Email": "987654321",
-      "No of Children": "987654321",
-    },
-    ),
-  ];
+  // final List<UserInfo> userInfoList = [
+  //   UserInfo(header: "Personal Information", items: {
+  //     "Full Name": "Steve Maina",
+  //     "DOB": "23/12/1998",
+  //     "Gender": "Male",
+  //     "Email":"stevemaina@gmail.com",
+  //     "Phone": "+254 712 345 678",
+  //     "Marital Status": "Single",
+  //     "Place of Residence": "Rongai",
+  //   }),
+  //   UserInfo(header: "Statutory Info", items: {
+  //     "ID Number": "987654321",
+  //     "Tax Pin": "987654321",
+  //     "NSSF": "987654321",
+  //     "NHIF": "123456789",
+  //     "HELB": "987654321",
+  //   }),
+  //   UserInfo(header: "Next of Kin", 
+  //   items: {
+  //     "Name": "N/A",
+  //     "Address": "987654321",
+  //     "Email": "dummy@gmail.com",
+  //     "Phone": "987654321",
+  //     "Relationship": "Guardian",
+  //   }),
+  //   UserInfo(header: "Famly Details", 
+  //   items: {
+  //     "Name": "123456789",
+  //     "Phone": "987654321",
+  //     "Email": "987654321",
+  //     "No of Children": "987654321",
+  //   },
+  //   ),
+  // ];
 
-  void onPageChanged(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
+  // void onPageChanged(int index) {
+  //   setState(() {
+  //     currentIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -100,144 +100,145 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-              child: Column(
-                children: [
-                  // PageView indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(userInfoList.length, (index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        width: 12.0,
-                        height: 12.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: currentIndex == index
-                              ? const Color.fromARGB(255, 126, 167, 255)
-                              : Colors.grey.withOpacity(0.5),
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 20),
-                  // PageView.builder inside the container
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: onPageChanged,
-                      itemCount: userInfoList.length,
-                      itemBuilder: (context, index) {
-                        final userInfo = userInfoList[index];
-                        return SingleChildScrollView(  // Wrap content in SingleChildScrollView to enable scrolling
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userInfo.header,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 10),
-                              ...userInfo.items.entries.map((entry) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        entry.key,
-                                        style: const TextStyle(
-                                            fontSize: 16, fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      TextFormField(
-                                        initialValue: entry.value,
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 16),
-                                        decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.all(8.0),
-                                          filled: true,
-                                          fillColor: Colors.white,
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+              // child: Column(
+              //   children: [
+              //     // PageView indicator
+              //     Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: List.generate(userInfoList.length, (index) {
+              //         return Container(
+              //           margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              //           width: 12.0,
+              //           height: 12.0,
+              //           decoration: BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: currentIndex == index
+              //                 ? const Color.fromARGB(255, 126, 167, 255)
+              //                 : Colors.grey.withOpacity(0.5),
+              //           ),
+              //         );
+              //       }),
+              //     ),
+              //     const SizedBox(height: 20),
+              //     // PageView.builder inside the container
+              //     Expanded(
+              //       child: PageView.builder(
+              //         controller: _pageController,
+              //         onPageChanged: onPageChanged,
+              //         itemCount: userInfoList.length,
+              //         itemBuilder: (context, index) {
+              //           final userInfo = userInfoList[index];
+              //           return SingleChildScrollView(  // Wrap content in SingleChildScrollView to enable scrolling
+              //             child: Column(
+              //               crossAxisAlignment: CrossAxisAlignment.start,
+              //               children: [
+              //                 Text(
+              //                   userInfo.header,
+              //                   style: const TextStyle(
+              //                       fontSize: 20, fontWeight: FontWeight.bold),
+              //                 ),
+              //                 const SizedBox(height: 10),
+              //                 ...userInfo.items.entries.map((entry) {
+              //                   return Padding(
+              //                     padding: const EdgeInsets.symmetric(vertical: 8.0),
+              //                     child: Column(
+              //                       crossAxisAlignment: CrossAxisAlignment.start,
+              //                       children: [
+              //                         Text(
+              //                           entry.key,
+              //                           style: const TextStyle(
+              //                               fontSize: 16, fontWeight: FontWeight.w600),
+              //                         ),
+              //                         const SizedBox(height: 5),
+              //                         TextFormField(
+              //                           initialValue: entry.value,
+              //                           style: const TextStyle(
+              //                               color: Colors.black, fontSize: 16),
+              //                           decoration: InputDecoration(
+              //                             contentPadding: const EdgeInsets.all(8.0),
+              //                             filled: true,
+              //                             fillColor: Colors.white,
+              //                             border: OutlineInputBorder(
+              //                               borderRadius: BorderRadius.circular(10),
+              //                               borderSide: const BorderSide(
+              //                                 color: Colors.grey,
+              //                               ),
+              //                             ),
+              //                           ),
+              //                         ),
+              //                       ],
+              //                     ),
+              //                   );
+              //                 }).toList(),
+              //               ],
+              //             ),
+              //           );
+              //         },
+              //       ),
+              //     ),
 
-                  const SizedBox(height: 10),
+              //     const SizedBox(height: 10),
                   
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const Homepage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize:const Size(50, 40), // Ensures height is 50
-                          backgroundColor: const Color.fromARGB(255, 126, 167, 255), // Background color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50), // Rounded corners
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Save",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ),
-                    const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () {
-                          if (currentIndex > 0) {
-                            _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeIn);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward),
-                        onPressed: () {
-                          if (currentIndex < userInfoList.length - 1) {
-                            _pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeIn);
-                          }
-                        },
-                      ),
+              //     SizedBox(
+              //       width: 150,
+              //       child: ElevatedButton(
+              //           onPressed: () {
+              //             Navigator.of(context).push(
+              //               MaterialPageRoute(
+              //                 builder: (context) => const Homepage(),
+              //               ),
+              //             );
+              //           },
+              //           style: ElevatedButton.styleFrom(
+              //             minimumSize:const Size(50, 40), // Ensures height is 50
+              //             backgroundColor: const Color.fromARGB(255, 126, 167, 255), // Background color
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(50), // Rounded corners
+              //             ),
+              //           ),
+              //           child: const Center(
+              //             child: Text(
+              //               "Save",
+              //               style: TextStyle(
+              //                 color: Colors.white,
+              //                 fontSize: 16,
+              //                 fontWeight: FontWeight.bold,
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //     ),
+              //       const SizedBox(height: 6),
+              //     Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //       children: [
+              //         IconButton(
+              //           icon: const Icon(Icons.arrow_back),
+              //           onPressed: () {
+              //             if (currentIndex > 0) {
+              //               _pageController.previousPage(
+              //                   duration: const Duration(milliseconds: 300),
+              //                   curve: Curves.easeIn);
+              //             }
+              //           },
+              //         ),
+              //         IconButton(
+              //           icon: const Icon(Icons.arrow_forward),
+              //           onPressed: () {
+              //             if (currentIndex < userInfoList.length - 1) {
+              //               _pageController.nextPage(
+              //                   duration: const Duration(milliseconds: 300),
+              //                   curve: Curves.easeIn);
+              //             }
+              //           },
+              //         ),
                       
-                    ],
-                  ),
+              //       ],
+              //     ),
                   
-                ],
-              ),
+              //   ],
+              // ),
+           
             ),
           ),
         ],

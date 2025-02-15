@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:systemapp/widgets/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:systemapp/providers/providers.dart';
 import 'edit_profile.dart';
 
 class UserInfo {
   final String header;
-  final Map<String, String> items;
+  final Map<String, dynamic> items;
 
   UserInfo({required this.header, required this.items});
 }
 
 class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({super.key});
+  final String staffid;
+  const MyProfilePage({super.key, required this.staffid});
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
@@ -18,53 +20,19 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   final PageController _pageController = PageController();
-  final userInfoList = [
-    UserInfo(header: "Personal Info", 
-    items: {
-      "Full Name": "Steve Maina",
-      "DOB": "23/12/1998",
-      "Gender": "Male",
-      "Email":"stevemaina@gmail.com",
-      "Phone": "+254 712 345 678",
-      "MArital Status": "SIngle",
-      "Place of Residence": "Rongai",
-
-
-    }),
-    UserInfo(header: "Statutory Declaration", 
-    items: {
-      "ID Number": "987654321",
-      "Tax Pin": "987654321",
-      "NSSF": "987654321",
-      "NHIF": "123456789",
-      "HELB": "987654321",
-    }),
-    UserInfo(header: "Next of Kin", 
-    items: {
-      "Name": "N/A",
-      "Address": "987654321",
-      "Email": "dummy@gmail.com",
-      "Phone": "987654321",
-      "Relationship": "Guardian",
-    }),
-    UserInfo(header: "Famly Details", 
-    items: {
-      "Name": "123456789",
-      "Phone": "987654321",
-      "Email": "987654321",
-      "No of Children": "987654321",
-    })
-    
-  ];
 
   void _previousPage() {
     _pageController.previousPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _nextPage() {
     _pageController.nextPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -83,7 +51,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 width: 120,
                 height: 120,
                 child: CircleAvatar(
-                  radius: 50, 
+                  radius: 50,
                   backgroundImage: NetworkImage('https://picsum.photos/200/300'),
                 ),
               ),
@@ -95,9 +63,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
               const Text(
                 'stevemaina@gmail.com',
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(220, 56, 55, 55)),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(220, 56, 55, 55),
+                ),
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -116,9 +85,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   child: const Text(
                     'Edit Profile',
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -140,87 +110,139 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ),
                 ],
               ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final asyncRes = ref.watch(fetchDetailsProvider(widget.staffid));
 
-              // PageView with Controller
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 730,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: userInfoList.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        padding: const EdgeInsets.all(15),
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 126, 167, 255),
-                          borderRadius: BorderRadius.circular(15),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: const Color.fromARGB(255, 184, 184, 184).withOpacity(0.8),
-                          //     blurRadius: 5,
-                          //     offset: const Offset(0, 4),
-                          //   ),
-                          // ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              userInfoList[index].header,
-                              style: const TextStyle(
-                                  fontSize: 20,color: Color.fromARGB(255, 255, 255, 255), fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            ...userInfoList[index].items.entries.map((entry) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                  return asyncRes.when(
+                    data: (result) {
+                      final profileData = result[0];
+                      final error = result[1];
+
+                      if (error != null) {
+                        return Center(child: Text(error)); // Display error
+                      }
+
+                      if (profileData == null) {
+                        return const Center(child: Text('No data available.'));
+                      }
+
+                      try {
+                        // Parse the data
+                        final userInfoList = [
+                          UserInfo(
+                            header: "Personal Info",
+                            items: (profileData['personal_details'] as Map<dynamic, dynamic>)
+                                .map((key, value) =>
+                                    MapEntry(key.toString(), value?.toString() ?? '')),
+                          ),
+                          UserInfo(
+                            header: "Statutory Declaration",
+                            items: (profileData['statutory_declaration'] as Map<dynamic, dynamic>)
+                                .map((key, value) =>
+                                    MapEntry(key.toString(), value?.toString() ?? '')),
+                          ),
+                          UserInfo(
+                            header: "Next of Kin",
+                            items: (profileData['next_of_kin'] as Map<dynamic, dynamic>)
+                                .map((key, value) =>
+                                    MapEntry(key.toString(), value?.toString() ?? '')),
+                          ),
+                          UserInfo(
+                            header: "Family Details",
+                            items: (profileData['family_details'] as Map<dynamic, dynamic>)
+                                .map((key, value) =>
+                                    MapEntry(key.toString(), value?.toString() ?? '')),
+                          ),
+                        ];
+
+                        // Display the parsed data in a PageView
+                        return SizedBox(
+                          height: 730,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: userInfoList.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                padding: const EdgeInsets.all(15),
+                                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 126, 167, 255),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      entry.key,
+                                      userInfoList[index].header,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Color.fromARGB(255, 255, 255, 255),
-                                          fontWeight: FontWeight.w600),
-                                          
-                                    ),
-                                    const SizedBox(height: 5),
-                                    TextFormField(
-                                      initialValue: entry.value,
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 16),
-                                      readOnly: true,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.all(8.0),
-                                        filled: true,
-                                        fillColor: const Color.fromARGB(255, 255, 255, 255),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
-                                          borderSide: const BorderSide(
-                                            color: Color.fromARGB(255, 61, 61, 61),
-                                          ),
-                                        ),
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    const SizedBox(height: 10),
+                                    ...userInfoList[index].items.entries.map(
+                                      (entry) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                entry.key,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              TextFormField(
+                                                initialValue: entry.value,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                ),
+                                                readOnly: true,
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets.all(8.0),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(16),
+                                                    borderSide: const BorderSide(
+                                                      color: Colors.black54,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
                                   ],
                                 ),
                               );
-                            }).toList(),
-                          ],
-                        ),
-                      );
+                            },
+                          ),
+                        );
+                      } catch (e) {
+                        return Center(child: Text('Error parsing data: $e'));
+                      }
                     },
-                  ),
-                ),
+                    loading: () => const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                    error: (err, stack) => Center(
+                      child: Text('Error: $err'),
+                    ),
+                  );
+                },
               ),
-
-              // Page Navigation Buttons
-              
             ],
           ),
         ),
